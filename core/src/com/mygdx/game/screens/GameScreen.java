@@ -8,11 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.WorldModel;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.controllers.KeyboardController;
 
 public class GameScreen extends BasicScreen {
     private final WorldModel model;
     private final OrthographicCamera cam;
     private final Box2DDebugRenderer debugRenderer;
+    private final KeyboardController controller;
     private Stage stage;
 
     public GameScreen(MyGdxGame game) {
@@ -21,10 +23,17 @@ public class GameScreen extends BasicScreen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        model = new WorldModel();
+        controller = new KeyboardController();
+        model = new WorldModel(controller);
         cam  =new OrthographicCamera(Gdx.graphics.getWidth()/20,Gdx.graphics.getHeight()/20);
         cam.setToOrtho(false);
-        debugRenderer = new Box2DDebugRenderer(true,true,true,true,true,true);
+        debugRenderer = new Box2DDebugRenderer(true,false,false,false,false,false);
+        //debugRenderer = new Box2DDebugRenderer(true,true,true,true,true,true);
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(controller);
     }
 
     @Override

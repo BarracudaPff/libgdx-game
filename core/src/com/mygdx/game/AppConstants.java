@@ -22,4 +22,12 @@ public class AppConstants {
         LEFT_DOWN,
         LEFT_UP
     }
+
+    public static enum Material {
+        STEEL, WOOD, RUBBER, STONE
+    }
+
+    public static enum Shape {
+        SQUARE, CIRCLE, PEGAGON, ARROW
+    }
 }

@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		//config.height = 1080;
 		config.width = 576;
 		config.height = 824;
-		//config.resizable = false;
+		config.resizable = false;
 		config.vSyncEnabled = false;
 		new LwjglApplication(new MyGdxGame(), config);
 	}

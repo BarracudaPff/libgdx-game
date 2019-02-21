@@ -1,83 +1,69 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.controllers.KeyboardController;
+import com.mygdx.game.units.BodyFactory;
+import com.mygdx.game.units.Player;
 import com.mygdx.game.units.Wall;
 
 public class WorldModel {
-    public World world;
-    private Box2DDebugRenderer debugRenderer;
-    private OrthographicCamera camera;
-    private Body bodyd;
-    private Body bodys;
-    private Body bodyk;
+    private final KeyboardController controller;
+    private Player player;
 
-    public WorldModel() {
-        world = new World(new Vector2(0, 0), true);
-        //createFloor();
-        createObject();
-        //createMovingObject();
+    public final World world;
+
+    public WorldModel(KeyboardController controller) {
+        world = new World(new Vector2(0, -9.8f), true);
+        this.controller = controller;
+        createWalls();
+        for (int i = 0; i < 2; i++) {
+            createMovingObject(new RandomXS128().nextInt(21) + 1, new RandomXS128().nextInt(21) + 1, i, -1.75f);
+        }
+        player = new Player();
+        player.create(world);
+        //createMovingObject(15, 15, 1f, -1.75f);
+        //createMovingObject(15, 15, 1f, -0.75f);
     }
 
     public void render(float delta) {
+        if (controller.isUp()) {
+            player.move(new Vector2(0, 100));
+        } else if (controller.isRight()) {
+            player.move(new Vector2(100, 0));
+        } else if (controller.isDown()) {
+            player.move(new Vector2(0, -100));
+        } else if (controller.isLeft()) {
+            player.move(new Vector2(-100, 0));
+        }
         world.step(delta, 3, 3);
     }
 
-    private void createObject() {
-        new Wall(AppConstants.Direction.UP_RIGHT, 10, new Vector2(20, 10)).create(world);
-        new Wall(AppConstants.Direction.LEFT_UP, 10, new Vector2(20, 10)).create(world);
+    private void createWalls() {
+        new Wall(AppConstants.Direction.UP, Gdx.graphics.getHeight() / 20, new Vector2(0.5f, 0.5f)).create(world);
+        new Wall(AppConstants.Direction.UP, Gdx.graphics.getHeight() / 20, new Vector2(Gdx.graphics.getWidth() / 20 - 0.5f, 0.5f)).create(world);
+        new Wall(AppConstants.Direction.RIGHT, Gdx.graphics.getWidth() / 20, new Vector2(0.5f, 0.5f)).create(world);
+        new Wall(AppConstants.Direction.LEFT, Gdx.graphics.getWidth() / 20, new Vector2(Gdx.graphics.getWidth() / 20 - 0.5f, Gdx.graphics.getHeight() / 20 - 0.5f)).create(world);
     }
 
-    private void createFloor() {
-        // create a new body definition (type and location)
+    private void createMovingObject(float x, float y, float xSpeed, float ySpeed) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0, -10);
-        // add it to the world
-        bodys = world.createBody(bodyDef);
-        // set the shape (here we use a box 50 meters wide, 1 meter tall )
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(50, 1);
-        // create the physical object in our body)
-        // without this our body would just be data in the world
-        bodys.createFixture(shape, 0.0f);
-        // we no longer use the shape object here so dispose of it.
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(x, y);
+
+        Body bodyk = world.createBody(bodyDef);
+
+        CircleShape shape = new CircleShape();
+        shape.setRadius(0.5f);
+
+        bodyk.createFixture(BodyFactory.getInstance(world).makeFixture(AppConstants.Material.RUBBER, shape));
+        bodyk.setLinearVelocity(xSpeed, -ySpeed);
+
         shape.dispose();
-    }
-
-    private void createMovingObject() {
-
-        //create a new body definition (type and location)
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
-        bodyDef.position.set(0, -12);
-
-
-        // add it to the world
-        bodyk = world.createBody(bodyDef);
-
-        // set the shape (here we use a box 50 meters wide, 1 meter tall )
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(1, 1);
-
-        // set the properties of the object ( shape, weight, restitution(bouncyness)
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
-
-        // create the physical object in our body)
-        // without this our body would just be data in the world
-        bodyk.createFixture(shape, 0.0f);
-
-        // we no longer use the shape object here so dispose of it.
-        shape.dispose();
-
-        bodyk.setLinearVelocity(0, 0.75f);
     }
 }

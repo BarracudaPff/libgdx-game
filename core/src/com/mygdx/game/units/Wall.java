@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.AppConstants;
 
-public class Wall {
+public class Wall implements Creatable {
     private AppConstants.Direction direction;
     private int count;
     private Vector2 startCoord;
@@ -15,14 +15,13 @@ public class Wall {
         this.startCoord = startCoord;
     }
 
-    public Wall create(World world) {
+    @Override
+    public void create(World world) {
         Vector2 addVector = getAddVector();
         for (float i = 0; i < count; i++) {
-            System.out.println(startCoord);
             new Box(startCoord).create(world);
             startCoord.add(addVector);
         }
-        return this;
     }
 
     private Vector2 getAddVector() {
