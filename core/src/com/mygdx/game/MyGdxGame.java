@@ -13,7 +13,7 @@ public class MyGdxGame extends Game {
 
     @Override
     public void create() {
-        changeScreen(AppConstants.LOADING);
+        changeScreen(AppConstants.GAME);
     }
 
     public void changeScreen(int screenId) {

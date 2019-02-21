@@ -8,4 +8,18 @@ public class AppConstants {
     public static final float APP_WIDTH = 200;
     public static final float APP_HEIGHT = 400;
 
+    public enum Direction {
+        UP,
+        UP_LEFT,
+        UP_RIGHT,
+        RIGHT,
+        RIGHT_UP,
+        RIGHT_DOWN,
+        DOWN,
+        DOWN_RIGHT,
+        DOWN_LEFT,
+        LEFT,
+        LEFT_DOWN,
+        LEFT_UP
+    }
 }
